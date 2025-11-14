@@ -1,4 +1,4 @@
-from sqlalchemy import ForeignKey
+
 from sqlalchemy import String
 from sqlalchemy import INTEGER
 from sqlalchemy import JSON
@@ -29,7 +29,7 @@ class banco():
         self.engine = create_engine("sqlite:///dados/banco.db", echo=True)
         Base.metadata.create_all(self.engine)
         self.adicionar_dados_json()
-        self.buscar_elenco("vivo",["Matador", "Especialista em qualquer tipo de arma"])
+        self.buscar_elenco("morto","Matador")
     def adicionar_dados_json(self):
         with Session(self.engine) as session:
             if session.query(User).count()>0:
@@ -56,12 +56,12 @@ class banco():
                     if(status!=None):
                         parametros.append(User.status == status)
                     
-                    if(habilidade==None):
-                        parametros.append(User.habilidades == habilidade)
-                    if(mais_votado!=True):
+                    if(habilidade!=None):
+                        parametros.append(User.habilidades.ilike(f"%{habilidade}%") )
+                    if(mais_votado==True):
                         parametros.append(User.status )
                 elenco=session.query(User.nome,User.ator,User.status,
-                    User.habilidades,User.upvote).filter(parametros.pop()).all()
+                    User.habilidades,User.upvote).filter(parametros.pop(),parametros.pop()).all()
                 
             lista_de_dict=list()
             dicionario=dict()
