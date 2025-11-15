@@ -17,7 +17,8 @@ class consulta():
 
                     busca=session.query(User.nome,User.ator,User.status,
                     User.habilidades,User.upvote)
-                except:
+                except Exception as e:
+                    print(f"erro consulta.py {e}")
                     return None
                 if(status==None and habilidade==None and mais_votado==False):
                         #aqui serve principalmente pra listar todos no elenco
@@ -55,8 +56,7 @@ class consulta():
                     else:
                         return None
                 else:
-
-                    dados=session.query(User.nome,User.ator,User.status,User.habilidades,User.upvote).filter(User.nome.ilike(f"{personagem}%"))
+                    dados=session.query(User.nome,User.ator,User.status,User.habilidades,User.upvote).filter(User.nome.ilike(f"{personagem}%")).first()
                     if(dados!=None):
                         return {"nome":dados[0][0],"ator":dados[0][1],"status":dados[0][2],"habilidade":dados[0][3],"upvote":dados[0][4]}
                     else:
@@ -73,11 +73,10 @@ class consulta():
                 atualizacao=update(User).filter(User.nome.ilike(f"{personagem}%")).values(upvote=contagem[0][0]+1)   
                 session.execute(atualizacao)
                 session.commit() 
-                try:
-                    contagem[0]
-                except IndexError:
-                    return 1
-            except:
+                if(contagem==None):
+                    return None
+            except Exception as e:
+                print(f"erro consulta.py {e}")
                 return 2
             return 0
     

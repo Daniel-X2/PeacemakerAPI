@@ -28,7 +28,8 @@ def busca_ator(nome:str):
             return dados_ator
         else:
             raise HTTPException(status_code=404, detail="Ator não encontrado")
-    except: 
+    except Exception as e:
+        print(f"erro no main.py {e}") 
         raise HTTPException(status_code=404, detail="ator nao enconstrado")
 @app.get("/personagem/{nome}")
 def buscar_personagem(nome:str):
@@ -38,7 +39,8 @@ def buscar_personagem(nome:str):
             return dados_personagem
         else:
             raise HTTPException(status_code=404, detail="personagem não encontrado")
-    except:
+    except Exception as e:
+        print(f"erro main.py {e}")
         raise HTTPException(status_code=404, detail="personagem nao encontrado")
 @app.post("/votar/{personagem}")
 def upvote(personagem):
