@@ -3,6 +3,8 @@ from fastapi import HTTPException
 
 from banco import banco
 from consulta import consulta
+
+
 app=FastAPI()
 
 db=banco()
@@ -14,18 +16,20 @@ def home():
    
 @app.get("/elenco")
 def elenco(status:str = None,habilidade:str=None,mais_votado:bool=False):
-    
-    return busca.buscar_no_elenco(status,habilidade)
+    n1=busca.buscar_no_elenco()
+    return n1
 @app.get("/elenco/{nome}")
-def busca_ator(ator:str):
+def busca_ator(nome:str):
     try:
-        dados_ator=busca.buscar_no_elenco(ator=ator)
+        dados_ator=busca.buscar_no_elenco(ator=nome)
+
         if (dados_ator):
+           
             return dados_ator
         else:
             raise HTTPException(status_code=404, detail="Ator não encontrado")
     except: 
-        raise HTTPException(status_code=404, detail="erro inesperado")
+        raise HTTPException(status_code=404, detail="ator nao enconstrado")
 @app.get("/personagem/{nome}")
 def buscar_personagem(nome:str):
     try:
@@ -35,7 +39,7 @@ def buscar_personagem(nome:str):
         else:
             raise HTTPException(status_code=404, detail="personagem não encontrado")
     except:
-        raise HTTPException(status_code=404, detail="erro inesperado")
+        raise HTTPException(status_code=404, detail="personagem nao encontrado")
 @app.post("/votar/{personagem}")
 def upvote(personagem):
     voto=busca.atualizar_voto(personagem)

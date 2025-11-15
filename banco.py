@@ -8,8 +8,7 @@ engine = create_engine("sqlite:///dados/banco.db")
 Base.metadata.create_all(engine)
 
 class banco():
-    def __init__(self):
-        
+    def __init__(self):  
         self.adicionar_dados_json()
     def adicionar_dados_json(self):
         with Session(engine) as session:
