@@ -7,6 +7,7 @@ from consulta import consulta
 
 app=FastAPI()
 db=banco()
+db.adicionar_dados_json()
 busca=consulta()
 
 @app.get("/")
@@ -15,13 +16,13 @@ def home():
    
 @app.get("/elenco")
 def elenco(status:str = None,habilidade:str=None,mais_votado:bool=False):
-    n1=busca.buscar_no_elenco(status_=status,habilidade_=habilidade,mais_votado_=mais_votado)
-    print(n1)
+    n1=busca.buscar_com_filtro(status_=status,habilidade_=habilidade,mais_votado_=mais_votado)
+    
     return n1
 @app.get("/elenco/{ator}")
 def busca_ator(ator:str):
     try:
-        dados_ator=busca.buscar_no_elenco(ator_=ator)
+        dados_ator=busca.buscar(ator_=ator)
         
         if (dados_ator):
            
@@ -34,7 +35,8 @@ def busca_ator(ator:str):
 @app.get("/personagem/{personagem}")
 def buscar_personagem(personagem:str):
     try:
-        dados_personagem=busca.buscar_no_elenco(personagem_=personagem)
+        dados_personagem=busca.buscar(personagem_=personagem)
+        print(dados_personagem)
         if (dados_personagem):
             return dados_personagem
         else:

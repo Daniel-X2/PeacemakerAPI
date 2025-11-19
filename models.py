@@ -6,8 +6,6 @@ from sqlalchemy.orm import DeclarativeBase
 from sqlalchemy.orm import Mapped,mapped_column
 
 
-from sqlalchemy import select
-
 
 class Base(DeclarativeBase):
     pass
