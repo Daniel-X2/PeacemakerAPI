@@ -7,7 +7,7 @@
             "ator":"John Cena",
             "status":"vivo",
             "habilidade": ["Matador", "Especialista em qualquer tipo de arma"],
-            "upvote":0
+            "upvote":5
         },
         {
             "id":2,
@@ -15,7 +15,7 @@
             "ator":"Freddie Stroma",
             "status":"morto",
             "habilidade":["Matador", "Conhece tudo sobre aranhas"],
-            "upvote":0
+            "upvote":7
         },
         {
             "id":3,
@@ -23,7 +23,7 @@
             "ator":"Danielle Brooks",
             "status":"vivo",
             "habilidade":["espionagem"],
-            "upvote":0
+            "upvote":3
         },
         {
             "id":4,
@@ -31,7 +31,7 @@
             "ator":"Jennifer Holland",
             "status":"vivo",
             "habilidade":["assasina profissional", "lutadora habil"],
-            "upvote":0
+            "upvote":9
         },
         {
             "id":5,
@@ -39,7 +39,7 @@
             "ator":"Steve Agee",
             "status":"vivo",
             "habilidade":["hacker"],
-            "upvote":0
+            "upvote":15
         }
     ]
 }

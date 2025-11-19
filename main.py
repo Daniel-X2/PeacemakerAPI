@@ -6,7 +6,6 @@ from consulta import consulta
 
 
 app=FastAPI()
-
 db=banco()
 busca=consulta()
 
@@ -16,13 +15,14 @@ def home():
    
 @app.get("/elenco")
 def elenco(status:str = None,habilidade:str=None,mais_votado:bool=False):
-    n1=busca.buscar_no_elenco()
+    n1=busca.buscar_no_elenco(status_=status,habilidade_=habilidade,mais_votado_=mais_votado)
+    print(n1)
     return n1
-@app.get("/elenco/{nome}")
-def busca_ator(nome:str):
+@app.get("/elenco/{ator}")
+def busca_ator(ator:str):
     try:
-        dados_ator=busca.buscar_no_elenco(ator=nome)
-
+        dados_ator=busca.buscar_no_elenco(ator_=ator)
+        
         if (dados_ator):
            
             return dados_ator
@@ -31,10 +31,10 @@ def busca_ator(nome:str):
     except Exception as e:
         print(f"erro no main.py {e}") 
         raise HTTPException(status_code=404, detail="ator nao enconstrado")
-@app.get("/personagem/{nome}")
-def buscar_personagem(nome:str):
+@app.get("/personagem/{personagem}")
+def buscar_personagem(personagem:str):
     try:
-        dados_personagem=busca.buscar_no_elenco(personagem=nome)
+        dados_personagem=busca.buscar_no_elenco(personagem_=personagem)
         if (dados_personagem):
             return dados_personagem
         else:
