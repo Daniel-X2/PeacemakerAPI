@@ -1,108 +1,124 @@
-from sqlalchemy import update
+from sqlalchemy import update, select
 from sqlalchemy.orm import Session
 from banco import engine
-from models import User
+from models import Elenco,campos
 from erros import *
+from pydantic_core import _pydantic_core
 
-class consulta():
-    def __init__(self):
-        pass
-    
-    def buscar_com_filtro(self,habilidade_:str=None,status_=None,mais_votado_=False):
+
+# ============================
+# REPOSITORY
+# ============================
+class ElencoRepository:
+    def get_all(self):
         with Session(engine) as session:
-            # #
-            # aqui faz a filtragem da pesquisa
-            # #
-            busca=session.query(User.nome,User.ator,User.status,
-            User.habilidades,User.upvote)
+            smt = select(Elenco)
+            resultado = session.scalars(smt).all()
+            return resultado
 
-            if(status_==None and habilidade_==None and mais_votado_==False):
-                #aqui serve principalmente pra listar todos no elenco
-                try:
-                    return self.loop_busca(busca.all(),False)
-                except ValorVazio:
-                    raise ValorVazio
-                except IndexError:
-                    raise IndexError
-            if(status_!=None):
-                busca=busca.filter(User.status==status_)
-            if(habilidade_!=None):
-                busca=busca.filter(User.habilidades.contains(habilidade_))
-            try:
-                return self.loop_busca(busca.all(),mais_votado_)
-            except ValorVazio:
-                raise ValorVazio
-            except IndexError:
-                raise IndexError  
-    def buscar_ator(self,ator_:str=None):
-        
+    def get_by_query(self, query):
         with Session(engine) as session:
+            return session.scalars(query)
 
-            quantidade_caracteres=len(ator_.replace(" ",""))
-            if(quantidade_caracteres>=4):
-                dados=session.query(User.nome,User.ator,User.status,User.habilidades,User.upvote).filter(User.ator.ilike(f"{ator_}%")).first()
-                    
-                if(dados!= None and dados !=""):
-                    return {"nome":dados[0],"ator":dados[1],"status":dados[2],"habilidade":dados[3],"upvote":dados[4]}
-                else:
-                    raise ErroNenhumResultado("ator")
+    def get_by_name(self, modo: str, nomee: str):
+        validar = len(nomee.strip())
+        if validar <= 3:
+            raise ErroValorMinimo("nome", 3, 4)
+
+        with Session(engine) as session:
+            smt = select(Elenco)
+
+            if modo == "ator":
+                smt = smt.filter(Elenco.ator.ilike(f"{nomee}%"))
             else:
-                raise ErroValorMinimo("ator",4,quantidade_caracteres)
-    def buscar_personagem(self,personagem_:str=None):
+                smt = smt.filter(Elenco.nome.ilike(f"{nomee}%"))
 
+            return session.scalars(smt).first()
+
+    def atualizar_voto(self, personagem):
         with Session(engine) as session:
-            quantidade_caracteres=len(personagem_.replace(" ",""))
-            if(quantidade_caracteres>=4):
-                dados=session.query(User.nome,User.ator,User.status,User.habilidades,User.upvote).filter(User.nome.ilike(f"{personagem_}%")).first()
-                if(dados!=None):
-                    return {"nome":dados[0],"ator":dados[1],"status":dados[2],"habilidade":dados[3],"upvote":dados[4]}
-                else:
-                    raise ErroNenhumResultado("personagem")
-            else:
-                raise ErroValorMinimo("personagem",4,quantidade_caracteres)
-    def loop_busca(self,dados_,mais_votado:bool):
-        lista=list()
-
-        if(dados_==None or dados_==""):
-            raise ErroNenhumResultado("")
-        try:
-            for c in range(0,len(dados_)):
-                            
-                lista.append({"nome":dados_[c][0],"ator":dados_[c][1],"status":dados_[c][2],
-                    "habilidade":dados_[c][3],"upvote":dados_[c][4]})
-            if(mais_votado==True):
-                
-                maior=0
-                personagem=""
-                for c in range(0,len(lista)):
-                    if(maior<=lista[c]["upvote"]):
-                        maior=lista[c]["upvote"]
-                        personagem=lista[c]
-                    else:
-                        continue
-                
-                
-                return personagem
-            
-            
-            return lista
-        
-        except IndexError:
-            raise IndexError
-    def atualizar_voto(self,personagem):
-        with Session(engine) as session: 
-            
             try:
-                
-                smt=(update(User).filter(User.nome.ilike(f"{personagem}%")).values(upvote=User.upvote+1))
-                #n1=session.execute(smt)
-                n2=session.connection().execute(smt)
-                if(n2.rowcount==0):
+                smt = (
+                    update(Elenco)
+                    .filter(Elenco.nome.ilike(f"{personagem}%"))
+                    .values(upvote=Elenco.upvote + 1)
+                )
+
+                result = session.execute(smt)
+
+                if result.rowcount == 0:
                     raise ErroNenhumResultado("Personagem")
+
                 session.commit()
 
             except Exception as e:
-                
                 raise ErroNoBancoSql(e)
-            return 0
-   
+
+
+repo = ElencoRepository()
+
+
+# ============================
+# SERVICE
+# ============================
+class ElencoService:
+    def monta_query(self, habilidade=None, status=None, mais_votado=False):
+        smt = select(Elenco)
+
+        if status is not None:
+            smt = smt.filter(Elenco.status == status)
+
+        if habilidade is not None:
+            smt = smt.filter(Elenco.habilidades.contains(habilidade))
+
+        if mais_votado:
+            smt = smt.order_by(Elenco.upvote.desc())
+
+        return smt
+
+    def busca_com_filtro(self, habilidade=None, status=None, mais_votado=False):
+        query = self.monta_query(habilidade, status, mais_votado)
+
+        resultados = repo.get_by_query(query)
+
+        if mais_votado:
+            dado = resultados.first()
+            if dado is None:
+                raise ErroNenhumResultado("Filtro")
+            return self.dto(dado)
+
+        dados = resultados.all()
+        return self.loop_busca(dados)
+
+    def loop_busca(self, dados):
+        lista = []
+        if not dados:
+            raise ValorVazio
+
+        for dado in dados:
+            try:
+                lista.append(self.dto(dado))
+            except _pydantic_core.ValidationError:
+                raise ValorVazio
+
+        return lista
+
+    def dto(self, dado):
+        return campos(
+            Nome=dado.nome,
+            ator=dado.ator,
+            status=dado.status,
+            habilidades=dado.habilidades,
+            upvote=dado.upvote,
+        ).model_dump()
+
+    def buscar_por_nome(self, modo, nome):
+        dado = repo.get_by_name(modo, nome)
+        if dado is None:
+            raise ErroNenhumResultado("Nome")
+        return self.dto(dado)
+
+    def atualizar_voto(self, personagem):
+        repo.atualizar_voto(personagem)
+
+

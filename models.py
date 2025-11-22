@@ -3,13 +3,13 @@ from sqlalchemy import INTEGER
 from sqlalchemy import JSON
 from sqlalchemy.orm import DeclarativeBase
 from sqlalchemy.orm import Mapped,mapped_column
-
+from pydantic import BaseModel,Field
 
 
 class Base(DeclarativeBase):
     pass
 
-class User(Base):
+class Elenco(Base):
     __tablename__="user_account"
 
     id:Mapped[int]=mapped_column(primary_key=True)
@@ -19,3 +19,13 @@ class User(Base):
     habilidades:Mapped[list]=mapped_column(JSON)
     upvote:Mapped[int]=mapped_column(INTEGER)
     
+
+class campos(BaseModel):
+    Nome:str =Field(min_length=3)
+    ator:str = Field(min_length=3)
+    status:str
+    habilidades:list
+    upvote:int
+
+
+

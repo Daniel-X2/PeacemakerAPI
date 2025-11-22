@@ -1,11 +1,10 @@
 from fastapi import FastAPI
 from fastapi import HTTPException
-from banco import banco
+from banco import adicionar_dados_json
 from consulta import consulta
 from erros import *
 
 app=FastAPI()
-db=banco()
 buscar=consulta()
 
 @app.get("/")
@@ -24,7 +23,8 @@ def elenco(status:str = None,habilidade:str=None,mais_votado:bool=False):
 @app.get("/elenco/{ator}")
 def busca_ator(ator:str):
     try:
-        dados_ator=buscar.buscar_ator(ator_=ator)
+        
+        dados_ator=buscar.buscar(modo="ator",nome=ator)
         
         return dados_ator
     except ErroValorMinimo:
@@ -34,7 +34,7 @@ def busca_ator(ator:str):
 @app.get("/personagem/{personagem}")
 def buscar_personagem(personagem:str):
     try:
-        dados_personagem=buscar.buscar_personagem(personagem_=personagem)
+        dados_personagem=buscar.buscar(modo="personagem",nome=personagem)
        
         return dados_personagem
     except ErroValorMinimo:
