@@ -27,8 +27,8 @@ API REST inspirada na série **Pacificador (Peacemaker)**, desenvolvida com **Fa
 │   │   └── dto.py                   # Data Transfer Objects e serialização
 │   ├── modelos/
 │   │   └── models.py                # Modelos SQLAlchemy
-│   └── Erros_personalizado/         # Exceções customizadas
-│       └── erros.py                  
+│   └── Erros_personalizado/         
+│       └── erros.py                  # Exceções customizadas
 ├───dados/
 │   ├── banco.py                 # Configuração do banco
 │   ├── banco.db                 # Banco SQLite
