@@ -18,7 +18,7 @@ class ElencoService():
         """Inicializa o serviço de elenco."""
         pass
 
-    def buscar_com_filtro(self, vivo: bool = True, habilidade: str = None, mais_votado: bool = False) -> dict:
+    def buscar_com_filtro(self, vivo: bool = True, habilidade: str = None, mais_votado: bool = False) :
         """
         Busca personagens aplicando filtros personalizados.
 

@@ -46,7 +46,7 @@ def elenco() -> list:
                             detail="O valor retornado está vazio")
 
 @app.get("/busca/")
-def busca_com_filtro(vivo: bool = True, habilidade: str = None, mais_votado: bool = False) -> list:
+def busca_com_filtro(vivo: bool = True, habilidade: str = None, mais_votado: bool = False) :
     """
     Busca personagens com filtros personalizados.
     
@@ -86,7 +86,7 @@ def busca_com_filtro(vivo: bool = True, habilidade: str = None, mais_votado: boo
     return dados
 
 @app.get("/elenco/{ator}")
-def busca_ator(ator:str) -> dict:
+def busca_ator(ator:str) :
     """
     Busca informações completas de um ator específico.
     
