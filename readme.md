@@ -2,6 +2,8 @@
 
 API REST inspirada na série **Pacificador (Peacemaker)**, desenvolvida com **FastAPI** e **SQLAlchemy**. Permite consultar informações sobre o elenco, personagens, realizar votações, visualizar rankings e estatísticas, além de buscas avançadas com filtros personalizados.
 
+🌐 **API em produção:** [https://api-pacificador.onrender.com/docs](https://api-pacificador.onrender.com/docs)
+
 ---
 
 ## 🚀 Tecnologias Utilizadas
@@ -11,6 +13,22 @@ API REST inspirada na série **Pacificador (Peacemaker)**, desenvolvida com **Fa
 - **Pydantic** - Validação de dados e serialização
 - **SQLite** - Banco de dados relacional
 - **Pytest** - Framework de testes
+- **Render** - Plataforma de hospedagem
+
+---
+
+## 🌐 Acesso Rápido
+
+- **Documentação Interativa (Swagger):** [https://api-pacificador.onrender.com/docs](https://api-pacificador.onrender.com/docs)
+- **API Base URL:** `https://api-pacificador.onrender.com`
+
+### Exemplos de uso direto:
+- Ver elenco completo: [/elenco](https://api-pacificador.onrender.com/elenco)
+- Ver ranking: [/ranking](https://api-pacificador.onrender.com/ranking)
+- Ver estatísticas: [/stats](https://api-pacificador.onrender.com/stats)
+- Buscar personagens vivos: [/busca/?vivo=true](https://api-pacificador.onrender.com/busca/?vivo=true)
+
+⚠️ **Nota sobre persistência:** A API utiliza SQLite em ambiente gratuito. Os dados (incluindo votos) podem ser resetados periodicamente devido às limitações do plano free tier do Render.
 
 ---
 
@@ -39,7 +57,7 @@ API REST inspirada na série **Pacificador (Peacemaker)**, desenvolvida com **Fa
 
 ---
 
-## 🛠️ Como Rodar o Projeto
+## 🛠️ Como Rodar o Projeto Localmente
 
 ### 1. Clone o repositório
 ```bash
@@ -263,6 +281,7 @@ O projeto segue o padrão de **arquitetura em camadas**:
 - [ ] Expandir cobertura de testes
 - [ ] Implementar rate limiting
 - [ ] Adicionar logs estruturados
+- [ ] Migrar para PostgreSQL para persistência permanente
 
 ---
 
@@ -270,6 +289,10 @@ O projeto segue o padrão de **arquitetura em camadas**:
 
 Desenvolvido para demonstração de boas práticas em desenvolvimento de APIs REST com FastAPI, arquitetura limpa e testes automatizados.
 
+**Links:**
+- 🌐 API em produção: [https://api-pacificador.onrender.com/docs](https://api-pacificador.onrender.com/docs)
+- 💻 Repositório: [https://github.com/Daniel-X2/api-pacificador](https://github.com/Daniel-X2/api-pacificador)
+
 ---
 
-**Nota:** Esta API foi criada para fins educativos e de portfolio.
+**Nota:** Esta API foi criada para fins educativos e de portfólio.
