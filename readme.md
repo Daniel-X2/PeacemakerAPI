@@ -94,8 +94,14 @@ A API estará disponível em: `http://localhost:8000`
 
 ### **1. GET /** 
 Endpoint de teste
-```
-Retorno: "ola mano"
+```	
+Response body
+
+{
+  "message": "API Pacificador",
+  "version": "1.0",
+  "docs": "/docs"
+}
 ```
 
 ### **2. GET /elenco**
