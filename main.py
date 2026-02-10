@@ -22,7 +22,9 @@ def home() -> dict:
     Endpoint de teste da API.
     
     Returns:
-        str: Mensagem de boas-vindas.
+        .{"message": "API Pacificador",
+        "version": "1.0",
+        "docs": "/docs"}
     """
     return {"message": "API Pacificador",
         "version": "1.0",
