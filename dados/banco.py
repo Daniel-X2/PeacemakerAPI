@@ -4,8 +4,15 @@ import json
 from src.modelos.models import Elenco, Base
 
 from src.Erros_personalizado.erros import *
+import os
+from dotenv import load_dotenv
 
-engine = create_engine("sqlite:///dados/banco.db")
+
+load_dotenv()
+SQLALCHEMY_DATABASE_URL = os.getenv("DATABASE_URL")
+engine = create_engine(SQLALCHEMY_DATABASE_URL)
+
+engine = create_engine("")
 Base.metadata.create_all(engine)
 
 

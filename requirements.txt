@@ -2,3 +2,5 @@ SQLAlchemy
 fastapi
 pytest
 uvicorn
+psycopg2-binary
+python-dotenv
