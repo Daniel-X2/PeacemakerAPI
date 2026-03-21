@@ -1,4 +1,4 @@
-from sqlalchemy import update, select, func
+from sqlalchemy import update, select, func,cast,String
 from sqlalchemy.orm import Session
 from dados.banco import engine, Elenco
 
@@ -62,7 +62,8 @@ class ElencoRepository():
         Returns:
             Select: Statement com filtro de habilidade aplicado.
         """
-        smt = smt.filter(Elenco.habilidades.contains(habilidade))
+
+        smt = smt.filter(cast(Elenco.habilidades, String).contains(habilidade))
         return smt
         
     def executar_all(self, smt):

@@ -28,8 +28,8 @@ class Elenco(Base):
     __tablename__ = "elenco"
 
     id: Mapped[int] = mapped_column(primary_key=True)
-    nome: Mapped[str] = mapped_column(String(30))
-    ator: Mapped[str] = mapped_column(String(30))
+    nome: Mapped[str] = mapped_column(String(2000))
+    ator: Mapped[str] = mapped_column(String(2000))
     vivo: Mapped[bool] = mapped_column(Boolean)
     habilidades: Mapped[list] = mapped_column(JSON)
     upvote: Mapped[int] = mapped_column(INTEGER)
