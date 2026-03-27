@@ -2,7 +2,7 @@
 
 API REST inspirada na série **Pacificador (Peacemaker)**, desenvolvida com **FastAPI** e **SQLAlchemy**. Permite consultar informações sobre o elenco, personagens, realizar votações, visualizar rankings e estatísticas, além de buscas avançadas com filtros personalizados.
 
-🌐 **API em produção:** [https://api-pacificador.onrender.com/docs](https://api-pacificador.onrender.com/docs)
+🌐 **API em produção:** https://api-pacificador.onrender.com/docs
 
 ---
 
@@ -11,294 +11,115 @@ API REST inspirada na série **Pacificador (Peacemaker)**, desenvolvida com **Fa
 - **FastAPI** - Framework web moderno e de alta performance
 - **SQLAlchemy** - ORM para manipulação do banco de dados
 - **Pydantic** - Validação de dados e serialização
-- **SQLite** - Banco de dados relacional
+- **PostgreSQL** - Banco de dados relacional (produção)
 - **Pytest** - Framework de testes
+- **Locust** - Testes de carga
 - **Render** - Plataforma de hospedagem
 
 ---
 
 ## 🌐 Acesso Rápido
 
-- **Documentação Interativa (Swagger):** [https://api-pacificador.onrender.com/docs](https://api-pacificador.onrender.com/docs)
+- **Documentação Interativa (Swagger):** https://api-pacificador.onrender.com/docs
 - **API Base URL:** `https://api-pacificador.onrender.com`
 
-### Exemplos de uso direto:
-- Ver elenco completo: [/elenco](https://api-pacificador.onrender.com/elenco)
-- Ver ranking: [/ranking](https://api-pacificador.onrender.com/ranking)
-- Ver estatísticas: [/stats](https://api-pacificador.onrender.com/stats)
-- Buscar personagens vivos: [/busca/?vivo=true](https://api-pacificador.onrender.com/busca/?vivo=true)
+---
 
-⚠️ **Nota sobre persistência:** A API utiliza SQLite em ambiente gratuito. Os dados (incluindo votos) podem ser resetados periodicamente devido às limitações do plano free tier do Render.
+## ⚡ Testes de Carga (Locust)
+
+A API foi submetida a testes de carga utilizando o **Locust**, simulando múltiplos usuários concorrentes realizando requisições.
+
+📊 **Cenário de teste:**
+- Simulação de múltiplos usuários acessando endpoints principais
+- Execução contra ambiente em produção
+- Testes focados em estabilidade e tempo de resposta
+
+📁 Arquivo de resultado disponível no projeto:
+- `dados/Locust.csv`
+
+📌 **O que foi validado:**
+- Tempo médio de resposta
+- Taxa de requisições por segundo (RPS)
+- Estabilidade sob carga
+- Baixa taxa de falhas
+
+Esses testes demonstram que a API suporta múltiplas requisições simultâneas mantendo consistência e desempenho.
 
 ---
 
 ## 📁 Estrutura do Projeto
 ```
 .
-├───main.py                      # Endpoints da API
+├───main.py
 ├───src/
 │   ├── service/
-│   │   └── main_service.py          # Lógica de negócio
 │   ├── repository/
-│   │   └── repo.py                  # Camada de acesso aos dados
 │   ├── dto/
-│   │   └── dto.py                   # Data Transfer Objects e serialização
 │   ├── modelos/
-│   │   └── models.py                # Modelos SQLAlchemy
-│   └── Erros_personalizado/         
-│       └── erros.py                  # Exceções customizadas
+│   └── Erros_personalizado/
 ├───dados/
-│   ├── banco.py                 # Configuração do banco
-│   ├── banco.db                 # Banco SQLite
-│   └── dados.json               # Dados iniciais
-│                 
-└───test_service.py              # Testes automatizados
+│   ├── banco.py
+│   ├── banco.db
+│   └── dados.json
+└───test_service.py
 ```
 
 ---
 
 ## 🛠️ Como Rodar o Projeto Localmente
 
-### 1. Clone o repositório
 ```bash
 git clone https://github.com/Daniel-X2/api-pacificador
 cd api-pacificador
-```
-
-### 2. Crie um ambiente virtual
-```bash
 python -m venv .venv
 source venv/bin/activate  # Linux/Mac
 venv\Scripts\activate     # Windows
-```
-
-### 3. Instale as dependências
-```bash
-pip install fastapi sqlalchemy pydantic pytest uvicorn
-```
-
-### 4. Execute a API
-```bash
+pip install -r requirements.txt
 uvicorn main:app --reload
 ```
 
-A API estará disponível em: `http://localhost:8000`
-
-### 5. Acesse a documentação interativa
--    `http://localhost:8000/docs`
-
-
----
-
-## 📌 Endpoints
-
-### **1. GET /** 
-Endpoint de teste
-```	
-Response body
-
-{
-  "message": "API Pacificador",
-  "version": "1.0",
-  "docs": "/docs"
-}
-```
-
-### **2. GET /elenco**
-Retorna todo o elenco cadastrado no banco de dados.
-
-**Resposta de sucesso (200):**
-```json
-[
-  {
-    "nome": "Christopher Smith / Pacificador",
-    "ator": "John Cena",
-    "vivo": true,
-    "habilidades": ["Matador", "Especialista em armas"],
-    "upvote": 5
-  }
-]
-```
-
-### **3. GET /elenco/{ator}**
-Retorna informações completas de um ator específico.
-
-**Exemplo:** `/elenco/John`
-
-**Parâmetros:**
-- `ator` (string, mínimo 3 caracteres) - Nome do ator a buscar
-
-**Códigos de resposta:**
-- `200` - Ator encontrado
-- `400` - Validação falhou (menos de 3 caracteres)
-- `404` - Ator não encontrado
-
-### **4. GET /personagem/{personagem}**
-Retorna dados completos de um personagem específico.
-
-**Exemplo:** `/personagem/Adrian`
-
-**Parâmetros:**
-- `personagem` (string, mínimo 3 caracteres) - Nome do personagem
-
-**Códigos de resposta:**
-- `200` - Personagem encontrado
-- `400` - Validação falhou
-- `404` - Personagem não encontrado
-
-### **5. POST /votar/{personagem}**
-Adiciona um voto ao personagem informado.
-
-**Exemplo:** `/votar/Pacificador`
-
-**Resposta de sucesso:**
-```json
-"sucesso"
-```
-
-**Códigos de resposta:**
-- `200` - Voto computado com sucesso
-- `400` - Nome muito curto (mínimo 3 caracteres)
-- `404` - Personagem não encontrado
-
-### **6. GET /ranking/**
-Retorna o ranking dos personagens mais votados.
-
-**Parâmetros opcionais:**
-- `top` (int, padrão: 3) - Quantidade de personagens no ranking
-
-**Exemplo:** `/ranking/?top=5`
-
-**Resposta de sucesso (200):**
-```json
-{
-  "1° lugar": {
-    "nome": "Christopher Smith / Pacificador",
-    "ator": "John Cena",
-    "vivo": true,
-    "habilidades": ["Matador", "Especialista em armas"],
-    "upvote": 10
-  },
-  "2° lugar": { ... },
-  "3° lugar": { ... }
-}
-```
-
-**Códigos de resposta:**
-- `200` - Ranking retornado
-- `404` - Valor zero, negativo ou banco vazio
-
-### **7. GET /stats**
-Retorna estatísticas gerais da API.
-
-**Resposta de sucesso (200):**
-```json
-{
-  "total de personagens": 8,
-  "total de personagens vivos": 6,
-  "total de personagens mortos": 2,
-  "personagem com maior quantidade de votos": "Christopher Smith / Pacificador 10 votos"
-}
-```
-
-### **8. GET /busca/**
-Realiza busca avançada com filtros personalizados.
-
-**Parâmetros opcionais:**
-- `vivo` (bool, padrão: true) - Filtra por status (vivo/morto)
-- `habilidade` (string, mínimo 3 caracteres) - Filtra por habilidade específica
-- `mais_votado` (bool, padrão: false) - Retorna apenas o mais votado do filtro
-
-**Exemplos de uso:**
-
-Buscar personagens vivos:
-```
-/busca/?vivo=true
-```
-
-Buscar personagens com habilidade "matador":
-```
-/busca/?habilidade=matador
-```
-
-Buscar o personagem vivo, com habilidade "matador" e mais votado:
-```
-/busca/?vivo=true&habilidade=matador&mais_votado=true
-```
-
-**Códigos de resposta:**
-- `200` - Resultados encontrados
-- `400` - Parâmetros inválidos ou habilidade muito curta
-- `404` - Nenhum personagem encontrado com os filtros
+Acesse: `http://localhost:8000/docs`
 
 ---
 
 ## 🧪 Testes
 
-Execute os testes automatizados:
 ```bash
 pytest test_service.py -v
-```
-
-**Cobertura de testes:**
-- ✅ Busca com filtro por status (vivo/morto)
-- ✅ Busca com filtro por habilidade
-- ✅ Busca combinada (status + habilidade + mais votado)
-- ✅ Busca no elenco por ator/personagem
-- ✅ Retorno completo do elenco
-- ✅ Estatísticas
-- ✅ Ranking
-
----
-
-## 🗂️ Estrutura de Dados
-
-**Modelo Elenco:**
-```python
-{
-  "nome": str,           # Nome do personagem
-  "ator": str,           # Nome do ator
-  "vivo": bool,          # Status do personagem
-  "habilidades": list,   # Lista de habilidades
-  "upvote": int          # Quantidade de votos
-}
 ```
 
 ---
 
 ## 🎯 Arquitetura
 
-O projeto segue o padrão de **arquitetura em camadas**:
+O projeto segue arquitetura em camadas:
 
-- **Controller (main.py)** - Recebe requisições HTTP e trata exceções
-- **Service (service.py)** - Contém a lógica de negócio
-- **Repository (repo.py)** - Acessa e manipula dados no banco
-- **Models (models.py)** - Define estrutura das tabelas
-- **DTO (dto.py)** - Serializa dados para resposta da API
+- **Controller** - Entrada HTTP
+- **Service** - Regras de negócio
+- **Repository** - Acesso a dados
+- **Models** - Estrutura do banco
+- **DTO** - Serialização
 
 ---
 
 ## 🚧 Melhorias Futuras
 
-- [ ] Adicionar autenticação JWT
-- [ ] Implementar paginação nos endpoints
-- [ ] Dockerizar a aplicação
-- [ ] Adicionar CI/CD
-- [ ] Expandir cobertura de testes
-- [ ] Implementar rate limiting
-- [ ] Adicionar logs estruturados
-- [ ] Migrar para PostgreSQL para persistência permanente
+- [ ] Autenticação JWT
+- [ ] Paginação
+- [ ] CI/CD
+- [ ] Rate limiting
+- [ ] Logs estruturados
 
 ---
 
 ## 📞 Contato
 
-Desenvolvido para demonstração de boas práticas em desenvolvimento de APIs REST com FastAPI, arquitetura limpa e testes automatizados.
+Projeto desenvolvido para fins de portfólio demonstrando boas práticas com FastAPI, testes e arquitetura limpa.
 
-**Links:**
-- 🌐 API em produção: [https://api-pacificador.onrender.com/docs](https://api-pacificador.onrender.com/docs)
-- 💻 Repositório: [https://github.com/Daniel-X2/api-pacificador](https://github.com/Daniel-X2/api-pacificador)
+- 🌐 https://api-pacificador.onrender.com/docs
+- 💻 https://github.com/Daniel-X2/api-pacificador
 
 ---
 
-**Nota:** Esta API foi criada para fins educativos e de portfólio.
+**Nota:** API voltada para fins educacionais.
+
