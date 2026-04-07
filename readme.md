@@ -108,10 +108,7 @@ O projeto segue arquitetura em camadas:
 
 - [ ] Autenticação JWT
 - [ ] Paginação
-- [ ] CI/CD
-- [ ] Rate limiting
 - [ ] Logs estruturados
-
 ---
 
 ## 📞 Contato
