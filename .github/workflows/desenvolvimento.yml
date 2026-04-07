@@ -26,9 +26,9 @@ jobs:
           uses: actions/setup-python@v6
           with:
             python-version: "3.13"
-        - run: python3 dados/banco.py
-
+         
         - run: pip install -r requirements.txt
+        - run: python3 dados/banco.py
         - run: pytest test_service.py -v
           env:
             DB_USER: test
