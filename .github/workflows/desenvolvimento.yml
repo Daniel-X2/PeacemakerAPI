@@ -28,7 +28,7 @@ jobs:
             python-version: "3.13"
         - name: adicionar requeriment
           run: pip install -r requirements.txt
-        - name: 
+        
         - name: roda testes
           run: pytest 
           env:
