@@ -7,3 +7,9 @@ __pycache__/banco.cpython-313.pyc
 dados/banco.db
 /__pycache__
 .env
+/.idea
+.gitignore
+dados/__pycache__/banco.cpython-313.pyc
+.gitignore
+src/Erros_personalizado/__pycache__/erros.cpython-313.pyc
+.gitignore

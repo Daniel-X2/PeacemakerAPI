@@ -1,19 +1,24 @@
 from fastapi import FastAPI
-from fastapi import HTTPException
+from fastapi import HTTPException,Request
 from src.Erros_personalizado.erros import *
-from src.service.main_service import ElencoService
+from src.Service.Service import ElencoService
 from dados.banco import adicionar_dados_json
 from contextlib import asynccontextmanager
 from pydantic import constr
-
+from slowapi import Limiter, _rate_limit_exceeded_handler
+from slowapi.util import get_remote_address
+from slowapi.errors import RateLimitExceeded
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     adicionar_dados_json()  # executa só na inicialização da API
     yield
-
+limiter=Limiter(key_func=get_remote_address)
 app = FastAPI(lifespan=lifespan)
+app.state.limiter = limiter
+app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
+
 service = ElencoService()
 
 @app.get("/")
@@ -150,7 +155,8 @@ def buscar_personagem(personagem: str) -> dict:
                             detail="erro na validação dos dados inseridos")
 
 @app.post("/votar/{personagem}")
-def upvote(personagem: str) -> dict:
+@limiter.limit("1/day")
+def upvote(request:Request,personagem: str) -> dict:
     """
     Registra um voto para um personagem específico.
     
