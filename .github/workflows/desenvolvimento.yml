@@ -20,10 +20,10 @@ jobs:
             --health-retries 5
 
       steps:
-        - names: verifica codigo
+        - name: verifica codigo
           uses: actions/checkout@v6
-        - names: using python
-          uses: actions/setup-python@6
+        - name: using python
+          uses: actions/setup-python@v6
           with:
             python-version: "3.13"
           
