@@ -30,4 +30,9 @@ jobs:
         - run: pip install -r requirements.txt
         - run: pytest test_service.py -v
           env:
-            DATABASE_URL: postgresql://test:test@localhost/test
+            DB_USER: test
+            PASSWORD: test
+            DB_HOST: localhost
+            DB_NAME: test
+            SCHEMA: public
+            
