@@ -1,5 +1,6 @@
 # 🎬 API Pacificador
 [![entrega continua](https://github.com/Daniel-X2/PeacemakerAPI/actions/workflows/desenvolvimento.yml/badge.svg)](https://github.com/Daniel-X2/PeacemakerAPI/actions/workflows/desenvolvimento.yml)
+
 API REST inspirada na série **Pacificador (Peacemaker)**, desenvolvida com **FastAPI** e **SQLAlchemy**. Permite consultar informações sobre o elenco, personagens, realizar votações, visualizar rankings e estatísticas, além de buscas avançadas com filtros personalizados.
 
 🌐 **API em produção:** https://api-pacificador.onrender.com/docs
