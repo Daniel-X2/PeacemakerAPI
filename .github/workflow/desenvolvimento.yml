@@ -1,0 +1,33 @@
+name: entrega continua
+on: ["push","pull_request"]
+
+jobs:
+    entrega-py:
+      runs-on: ubuntu-latest
+      services:
+        postgres:
+          image: postgres:16
+          env:
+            POSTGRES_USER: test
+            POSTGRES_PASSWORD: test
+            POSTGRES_DB: test
+          ports:
+            - 5432:5432
+          options: >-
+            --health-cmd pg_isready
+            --health-interval 10s
+            --health-timeout 5s
+            --health-retries 5
+
+      steps:
+        - names: verifica codigo
+          uses: actions/checkout@v6
+        - names: using python
+          uses: actions/setup-python@6
+          with:
+            python-version: "3.13"
+          
+        - run: pip install -r requirements.txt
+        - run: pytest test_service.py -v
+          env:
+            DATABASE_URL: postgresql://test:test@localhost/test
