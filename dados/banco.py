@@ -1,9 +1,10 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm import Session
 import json
-from modelos.models import Elenco, Base
+from src.modelos.models import Elenco, Base
 from urllib.parse import quote
-from Erros_personalizado.erros import *
+
+from src.Erros_personalizado.erros import *
 import os
 from dotenv import load_dotenv
 
