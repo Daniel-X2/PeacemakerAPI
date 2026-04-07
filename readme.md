@@ -15,7 +15,8 @@ API REST inspirada na série **Pacificador (Peacemaker)**, desenvolvida com **Fa
 - **Pytest** - Framework de testes
 - **Locust** - Testes de carga
 - **Render** - Plataforma de hospedagem
-
+- **SlowAPI** - Rate limiting por IP na rota de votação
+- **GitHub Actions** - CI/CD automatizado
 ---
 
 ## 🌐 Acesso Rápido
