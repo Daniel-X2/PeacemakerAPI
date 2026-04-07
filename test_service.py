@@ -1,4 +1,4 @@
-from Service.Service import ElencoService
+from src.Service.Service import ElencoService
 import pytest
 class Test_service:
     service=ElencoService()
