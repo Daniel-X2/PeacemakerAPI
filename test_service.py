@@ -8,11 +8,11 @@ class Test_service:
         resultado=self.service.buscar_com_filtro(vivo=True)
         assert resultado[0]["vivo"]==True
     def test_busca_com_filtro_habilidade(self):
-        resultado=self.service.buscar_com_filtro(habilidade="matador")
+        resultado=self.service.buscar_com_filtro(habilidade="Matador")
         resultado=str(resultado[0]["habilidades"]).lower()
-        assert "matador" in resultado
+        assert "Matador" in resultado
     def test_busca_com_filtro(self):
-        resultado=self.service.buscar_com_filtro(vivo=True,habilidade="matador",mais_votado=True)
+        resultado=self.service.buscar_com_filtro(vivo=True,habilidade="Matador",mais_votado=True)
         assert resultado["ator"]=="John Cena"
     def test_busca_no_elenco(self):
         resultado=self.service.buscar_no_elenco("adrian","personagem")
