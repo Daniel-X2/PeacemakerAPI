@@ -28,10 +28,8 @@ jobs:
             python-version: "3.13"
         - name: adicionar requeriment
           run: pip install -r requirements.txt
-        - name: popular banco
-          run: pytest 
         - name: roda testes
-          run: pytest test_service.py -v
+          run: pytest 
           env:
             DB_USER: test
             PASSWORD: test
