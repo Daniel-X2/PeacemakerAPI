@@ -1,5 +1,7 @@
 from src.Service.Service import ElencoService
+from dados.banco import adicionar_dados_json
 import pytest
+adicionar_dados_json()
 class Test_service:
     service=ElencoService()
     def test_busca_com_filtro_vivo(self):
