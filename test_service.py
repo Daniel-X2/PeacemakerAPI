@@ -10,7 +10,7 @@ class Test_service:
     def test_busca_com_filtro_habilidade(self):
         resultado=self.service.buscar_com_filtro(habilidade="Matador")
         resultado=str(resultado[0]["habilidades"]).lower()
-        assert "Matador" in resultado
+        assert "matador" in resultado
     def test_busca_com_filtro(self):
         resultado=self.service.buscar_com_filtro(vivo=True,habilidade="Matador",mais_votado=True)
         assert resultado["ator"]=="John Cena"
