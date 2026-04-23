@@ -8,12 +8,18 @@ from pydantic import constr
 from slowapi import Limiter, _rate_limit_exceeded_handler
 from slowapi.util import get_remote_address
 from slowapi.errors import RateLimitExceeded
+from src.logger_config import setup_logger
+
+logger = setup_logger("API")
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
+    logger.info("Iniciando a API Pacificador...")
     adicionar_dados_json()  # executa só na inicialização da API
+    logger.info("Dados iniciais carregados com sucesso.")
     yield
+    logger.info("Encerrando a API Pacificador...")
 limiter=Limiter(key_func=get_remote_address)
 app = FastAPI(lifespan=lifespan)
 app.state.limiter = limiter
@@ -31,15 +37,20 @@ def home() -> dict:
         "version": "1.0",
         "docs": "/docs"}
     """
+    logger.info("Acesso ao endpoint home.")
     return {"message": "API Pacificador",
         "version": "1.0",
         "docs": "/docs"}
 
 @app.get("/elenco")
-def elenco() -> list:
+def elenco(page: int = 1, limit: int = 10) -> list:
     """
-    Retorna todo o elenco cadastrado no banco de dados.
+    Retorna todo o elenco cadastrado no banco de dados com suporte a paginação.
     
+    Args:
+        page (int): Número da página. Padrão: 1.
+        limit (int): Quantidade de registros por página. Padrão: 10.
+        
     Returns:
         list: Lista com todos os atores e personagens.
         
@@ -47,20 +58,22 @@ def elenco() -> list:
         HTTPException: Erro 204 se o elenco estiver vazio.
     """
     try:
-        return service.retornar_elenco()
+        return service.retornar_elenco(page=page, limit=limit)
     except ValorVazio:
         raise HTTPException(status_code=204,
                             detail="O valor retornado está vazio")
 
 @app.get("/busca/")
-def busca_com_filtro(vivo: bool = True, habilidade: str = None, mais_votado: bool = False) :
+def busca_com_filtro(vivo: bool = True, habilidade: str = None, mais_votado: bool = False, page: int = 1, limit: int = 10) :
     """
-    Busca personagens com filtros personalizados.
+    Busca personagens com filtros personalizados e suporte a paginação.
     
     Args:
         vivo (bool): Filtrar por personagens vivos. Padrão: True.
         habilidade (str): Filtrar por habilidade específica. Padrão: None.
         mais_votado (bool): Ordenar pelos mais votados. Padrão: False.
+        page (int): Número da página. Padrão: 1.
+        limit (int): Quantidade de registros por página. Padrão: 10.
         
     Returns:
         list: Lista de personagens que correspondem aos critérios.
@@ -73,20 +86,26 @@ def busca_com_filtro(vivo: bool = True, habilidade: str = None, mais_votado: boo
     try:
         dados = service.buscar_com_filtro(vivo=vivo,
                                         habilidade=habilidade,
-                                        mais_votado=mais_votado)
+                                        mais_votado=mais_votado,
+                                        page=page,
+                                        limit=limit)
     except ErroNenhumResultado:
+        logger.warning(f"Busca sem resultados para os filtros: vivo={vivo}, habilidade={habilidade}")
         raise HTTPException(
                             status_code=404,
                             detail="nenhum personagem encontrado com essas características")
     except ErroValidacao:
+        logger.error("Erro de validação na busca com filtros.")
         raise HTTPException(
                             status_code=422, 
                             detail="Erro ao validar os dados inseridos")
     except ErroSemParametros:
+        logger.warning("Tentativa de busca sem parâmetros.")
         raise HTTPException(
                             status_code=400, 
                             detail="Nenhum parâmetro selecionado")
     except ErroValorMinimo:
+        logger.warning("Parâmetro habilidade abaixo do tamanho mínimo.")
         raise HTTPException(
                             status_code=422, 
                             detail="o parâmetro habilidade não tem o valor mínimo")
@@ -114,12 +133,15 @@ def busca_ator(ator:str) :
 
         return dados_ator
     except ErroValorMinimo:
+        logger.error("Erro: O nome do ator tem menos de 3 caracteres.")
         raise HTTPException(status_code=422,
                             detail="Valor mínimo de caracteres não foi cumprido")
     except ErroValidacao:
+        logger.error("Erro de validação ao buscar ator.")
         raise HTTPException(status_code=422,
                             detail="erro na validação dos dados inseridos")
     except ErroNenhumResultado:
+        logger.error(f"Erro: Ator {ator} não encontrado.")
         raise HTTPException(status_code=404,
                             detail="ator não encontrado")
 
@@ -224,6 +246,7 @@ def estatisticas() -> dict:
     try:
         return service.stats()
     except ValorVazio:
+         logger.warning("Tentativa de acessar estatísticas, mas o banco está vazio.")
          raise HTTPException(status_code=204,
                             detail="O valor retornado está vazio")
 

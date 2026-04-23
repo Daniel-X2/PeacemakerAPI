@@ -2,7 +2,9 @@ from pydantic_core import _pydantic_core
 from src.Repository.Repository import ElencoRepository
 from src.dto.dto import ElencoDto, serializar_lista, serializar_dict
 from src.Erros_personalizado.erros import *
+from src.logger_config import setup_logger
 
+logger = setup_logger("Service")
 repository = ElencoRepository()
 
 
@@ -18,14 +20,16 @@ class ElencoService():
         """Inicializa o serviço de elenco."""
         pass
 
-    def buscar_com_filtro(self, vivo: bool = True, habilidade: str = None, mais_votado: bool = False) :
+    def buscar_com_filtro(self, vivo: bool = True, habilidade: str = None, mais_votado: bool = False, page: int = 1, limit: int = 10) :
         """
-        Busca personagens aplicando filtros personalizados.
+        Busca personagens aplicando filtros personalizados com suporte a paginação.
 
         Args:
             vivo (bool): Filtrar por status de vida. Padrão: True.
             habilidade (str): Filtrar por habilidade específica. Padrão: None.
             mais_votado (bool): Retornar apenas o mais votado. Padrão: False.
+            page (int): Número da página. Padrão: 1.
+            limit (int): Registros por página. Padrão: 10.
 
         Returns:
             dict: Personagem ou lista de personagens que correspondem aos filtros.
@@ -35,6 +39,7 @@ class ElencoService():
             ErroValidacao: Se houver erro na validação dos dados.
             ErroNenhumResultado: Se nenhum personagem atender aos critérios.
         """
+        offset = (page - 1) * limit
         smt = repository.get_select()
         smt = repository.filtro_status(status=vivo, smt=smt)
         if (habilidade != None and habilidade != ""):
@@ -43,6 +48,7 @@ class ElencoService():
             else:
                 raise ErroValorMinimo
         if (mais_votado == True):
+            logger.info("Buscando o personagem mais votado.")
             smt = repository.mais_votado(smt=smt)  # depois preciso sicronizar com os outros filtros
             dados = repository.executar_first(smt)
             try:
@@ -52,9 +58,14 @@ class ElencoService():
                                  habilidades=dados.habilidades,
                                  upvote=dados.upvote).model_dump()
             except _pydantic_core.ValidationError:
+                logger.error("Erro de validação ao processar personagem mais votado.")
                 raise ErroValidacao
             except AttributeError:
+                logger.warning("Nenhum personagem encontrado com os filtros aplicados.")
                 raise ErroNenhumResultado("filtros")
+        
+        logger.info(f"Buscando elenco com filtros (página {page}, limite {limit}).")
+        smt = repository.paginar(smt, limit, offset)
         dados = repository.executar_all(smt)
 
         if (len(dados) == 0):
@@ -98,9 +109,13 @@ class ElencoService():
         except _pydantic_core.ValidationError:
             raise ErroValidacao
 
-    def retornar_elenco(self) -> list:
+    def retornar_elenco(self, page: int = 1, limit: int = 10) -> list:
         """
-        Retorna todo o elenco cadastrado no banco de dados.
+        Retorna todo o elenco cadastrado no banco de dados com suporte a paginação.
+
+        Args:
+            page (int): Número da página. Padrão: 1.
+            limit (int): Registros por página. Padrão: 10.
 
         Returns:
             list: Lista com todos os atores e personagens.
@@ -108,7 +123,9 @@ class ElencoService():
         Raises:
             ValorVazio: Se o elenco estiver vazio.
         """
+        offset = (page - 1) * limit
         smt = repository.get_select()
+        smt = repository.paginar(smt, limit, offset)
         dados = repository.executar_all(smt)
         if (dados == None or len(dados) == 0):
             raise ValorVazio
@@ -127,6 +144,7 @@ class ElencoService():
         """
         if (len(nome) < 3):
             raise ErroValorMinimo
+        logger.info(f"Registrando voto para o personagem: {nome}")
         return repository.update_voto(nome)
         
     def stats(self) -> dict:

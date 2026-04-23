@@ -18,6 +18,7 @@ API REST inspirada na série **Pacificador (Peacemaker)**, desenvolvida com **Fa
 - **Render** - Plataforma de hospedagem
 - **SlowAPI** - Rate limiting por IP na rota de votação
 - **GitHub Actions** - CI/CD automatizado
+- **Logging (Built-in)** - Logs estruturados de sistema e negócio
 ---
 
 ## 🌐 Acesso Rápido
@@ -107,8 +108,8 @@ O projeto segue arquitetura em camadas:
 ## 🚧 Melhorias Futuras
 
 - [ ] Autenticação JWT
-- [ ] Paginação
-- [ ] Logs estruturados
+- [x] Paginação
+- [x] Logs estruturados
 ---
 
 ## 📞 Contato

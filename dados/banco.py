@@ -7,6 +7,8 @@ from src.Erros_personalizado.erros import *
 import os
 from dotenv import load_dotenv
 
+load_dotenv()
+
 user = os.getenv("DB_USER")
 password = quote(os.getenv("PASSWORD"), safe="")
 host = os.getenv("DB_HOST")

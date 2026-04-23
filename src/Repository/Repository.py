@@ -1,6 +1,9 @@
 from sqlalchemy import update, select, func,cast,String
 from sqlalchemy.orm import Session
 from dados.banco import engine, Elenco
+from src.logger_config import setup_logger
+
+logger = setup_logger("Repository")
 
 class ElencoRepository():
     """
@@ -102,6 +105,7 @@ class ElencoRepository():
         Returns:
             None
         """
+        logger.info(f"Atualizando voto no banco para: {personagem}")
         with Session(engine) as session:
             smt = (update(Elenco).filter(Elenco.nome.ilike(f"{personagem}%")).values(upvote=Elenco.upvote + 1))
             result=session.execute(smt)
@@ -161,6 +165,20 @@ class ElencoRepository():
             smt = select(func.count(Elenco.vivo)).filter(Elenco.vivo == vivo)
             total = session.execute(smt).scalars().first()
             return total
+
+    def paginar(self, smt, limit: int, offset: int):
+        """
+        Aplica paginação ao statement (LIMIT e OFFSET).
+        
+        Args:
+            smt (Select): Statement SQLAlchemy a ser paginado.
+            limit (int): Quantidade de registros por página.
+            offset (int): Quantidade de registros a pular.
+            
+        Returns:
+            Select: Statement com paginação aplicada.
+        """
+        return smt.limit(limit).offset(offset)
 
 
 
